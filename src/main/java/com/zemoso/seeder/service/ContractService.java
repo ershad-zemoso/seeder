@@ -41,7 +41,7 @@ public class ContractService {
     public SummaryDto getContractsSummary(final List<Long> contractIds) {
         final List<Contract> contracts = contractRepository.findAllAvailableById(contractIds);
 
-        if (contracts.isEmpty()) {
+        if (contracts == null || contracts.isEmpty()) {
             throw new NotFoundException(String.format("No contracts found for contractIds: %s", contractIds));
         }
 

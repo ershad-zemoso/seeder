@@ -19,16 +19,17 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 import static com.zemoso.seeder.util.TestDataFactory.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
-public class CashKickServiceTest {
+class CashKickServiceTest {
 
     @Mock
     PayoutService payoutService;
@@ -47,12 +48,12 @@ public class CashKickServiceTest {
     CashKickService cashKickService;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         cashKickService = new CashKickService(payoutService, cashKickRepository, contractRepository, userRepository, cashKickMapper);
     }
 
     @Test
-    public void testGetCashKicks() {
+    void testGetCashKicks() {
 
         User user = new User();
         CashKick cashKick1 = getCashKick1(user);
@@ -64,22 +65,22 @@ public class CashKickServiceTest {
 
         List<CashKickDto> cashKickDtos = cashKickService.getCashKicks(1L);
 
-        Assert.assertEquals(cashKickDtos.size(), 2);
+        Assert.assertEquals(2, cashKickDtos.size());
 
         if (cashKickDtos.get(0).getStatus().equals("Pending")) {
-            Assert.assertEquals(cashKickDtos.get(0).getName(), "cash kick-1");
-            Assert.assertEquals(cashKickDtos.get(0).getTotalReceived(), "$200000.00");
-            Assert.assertEquals(cashKickDtos.get(0).getTotalFinanced(), "$180000.00");
+            Assert.assertEquals("cash kick-1", cashKickDtos.get(0).getName());
+            Assert.assertEquals("$200000.00", cashKickDtos.get(0).getTotalReceived());
+            Assert.assertEquals("$180000.00", cashKickDtos.get(0).getTotalFinanced());
         } else {
-            Assert.assertEquals(cashKickDtos.get(0).getName(), "cash kick-2");
-            Assert.assertEquals(cashKickDtos.get(0).getTotalReceived(), "$150000.00");
-            Assert.assertEquals(cashKickDtos.get(0).getTotalFinanced(), "$135000.00");
+            Assert.assertEquals("cash kick-2", cashKickDtos.get(0).getName());
+            Assert.assertEquals("$150000.00", cashKickDtos.get(0).getTotalReceived());
+            Assert.assertEquals("$135000.00", cashKickDtos.get(0).getTotalFinanced());
         }
 
     }
 
     @Test
-    public void testGetCashKicksForInvalidUser() {
+    void testGetCashKicksForInvalidUser() {
 
         Mockito.when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
@@ -87,12 +88,12 @@ public class CashKickServiceTest {
             cashKickService.getCashKicks(1L);
         });
 
-        assertTrue(ex.getMessage().equals("User not found for userId: 1"));
+        assertEquals("User not found for userId: 1", ex.getMessage());
 
     }
 
     @Test
-    public void testGetCashKicksWhenEmpty() {
+    void testGetCashKicksWhenNull() {
 
         Mockito.when(userRepository.findById(1L)).thenReturn(Optional.of(new User()));
 
@@ -100,12 +101,28 @@ public class CashKickServiceTest {
             cashKickService.getCashKicks(1L);
         });
 
-        assertTrue(ex.getMessage().equals("No cash kicks found for userId: 1"));
+        assertEquals("No cash kicks found for userId: 1", ex.getMessage());
 
     }
 
     @Test
-    public void testSaveCashKick() {
+    void testGetCashKicksWhenEmpty() {
+
+        User user = new User();
+        user.setCashKicks(Collections.emptySet());
+
+        Mockito.when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+
+        Exception ex = assertThrows(NotFoundException.class, () -> {
+            cashKickService.getCashKicks(1L);
+        });
+
+        assertEquals("No cash kicks found for userId: 1", ex.getMessage());
+
+    }
+
+    @Test
+    void testSaveCashKick() {
 
         User user = new User();
         CashKickRequest cashKickRequest = getCashKickRequest();
@@ -123,7 +140,7 @@ public class CashKickServiceTest {
     }
 
     @Test
-    public void testSaveCashKickForInvalidContracts() {
+    void testSaveCashKickForInvalidContractsWhenNull() {
 
         CashKickRequest cashKickRequest = getCashKickRequest();
 
@@ -134,7 +151,23 @@ public class CashKickServiceTest {
             cashKickService.createCashKick(cashKickRequest);
         });
 
-        assertTrue(ex.getMessage().equals("No contracts found for contractIds: [1, 2]"));
+        assertEquals("No contracts found for contractIds: [1, 2]", ex.getMessage());
+    }
+
+    @Test
+    void testSaveCashKickForInvalidContractsWhenEmpty() {
+
+        CashKickRequest cashKickRequest = getCashKickRequest();
+        User user = new User();
+
+        Mockito.when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        Mockito.when(contractRepository.findAllAvailableById(List.of(1L, 2L))).thenReturn(Collections.emptyList());
+
+        Exception ex = assertThrows(NotFoundException.class, () -> {
+            cashKickService.createCashKick(cashKickRequest);
+        });
+
+        assertEquals("No contracts found for contractIds: [1, 2]", ex.getMessage());
     }
 
 }

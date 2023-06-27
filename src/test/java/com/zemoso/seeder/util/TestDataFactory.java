@@ -1,5 +1,7 @@
 package com.zemoso.seeder.util;
 
+import com.zemoso.seeder.dto.CashKickDto;
+import com.zemoso.seeder.dto.ContractDto;
 import com.zemoso.seeder.dto.SummaryDto;
 import com.zemoso.seeder.entity.CashKick;
 import com.zemoso.seeder.entity.Contract;
@@ -16,7 +18,7 @@ public class TestDataFactory {
         cashKick.setName("cash kick-1");
         cashKick.setStatus("Pending");
         cashKick.setUser(user);
-        cashKick.setMaturity(LocalDate.now().plusMonths(12));
+        cashKick.setMaturity(LocalDate.of(2023, 12, 01));
         cashKick.setTotalReceived(200000D);
         cashKick.setTotalFinanced(180000D);
         return cashKick;
@@ -77,6 +79,29 @@ public class TestDataFactory {
         summaryDto.setSelectedContractCount(2);
         summaryDto.setTotalPayableAmount("132000.00");
         summaryDto.setTotalPayout("116160.00");
-        return  summaryDto;
+        return summaryDto;
     }
+
+    public static ContractDto getContractDto() {
+        ContractDto contractDto = new ContractDto();
+        contractDto.setId(1L);
+        contractDto.setName("Contract-1");
+        contractDto.setFee("12.00");
+        contractDto.setType("Monthly");
+        contractDto.setPerPayment("12000.00");
+        contractDto.setPayment("126720.00");
+        contractDto.setTermLength(12);
+        return contractDto;
+    }
+
+    public static CashKickDto getCashKickDto() {
+        CashKickDto cashKickDto = new CashKickDto();
+        cashKickDto.setName("cash kick-1");
+        cashKickDto.setStatus("Pending");
+        cashKickDto.setMaturityDate("Dec 01, 2023");
+        cashKickDto.setTotalReceived("200000.00");
+        cashKickDto.setTotalFinanced("180000.00");
+        return cashKickDto;
+    }
+
 }

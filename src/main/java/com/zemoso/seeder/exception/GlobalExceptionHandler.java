@@ -14,13 +14,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> onNotFoundException(final NotFoundException ex) {
 
         log.error(ex.getMessage());
-        return new ResponseEntity<String>(ex.getMessage(), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler({RuntimeException.class})
     public ResponseEntity<String> onInternalServerError(final RuntimeException ex) {
 
         log.error(ex.getMessage(), ex);
-        return new ResponseEntity<String>("Internal server Error!", HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>("Internal server Error!", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

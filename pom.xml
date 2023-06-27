@@ -19,6 +19,7 @@
 		<sonar.organization>ershad-zemoso</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 		<sonar.login>ac1e796023dc84901742e4d94cb8fb94e1f7157a</sonar.login>
+		<sonar.exclusions>**/dto/**/*, **/entity/**/*, **/model/**/*, **/repository/**/*, **/*Constants.java, **/SeederApplication.java</sonar.exclusions>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -68,6 +69,14 @@
 			<version>2.28.2</version>
 			<scope>test</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.10.1</version>
+			<scope>test</scope>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -117,11 +126,6 @@
 							<artifactId>lombok</artifactId>
 							<version>1.18.20</version>
 						</path>
-<!--						<path>-->
-<!--							<groupId>org.projectlombok</groupId>-->
-<!--							<artifactId>lombok-mapstruct-binding</artifactId>-->
-<!--							<version>0.2.0</version>-->
-<!--						</path>-->
 						<path>
 							<groupId>org.mapstruct</groupId>
 							<artifactId>mapstruct-processor</artifactId>
